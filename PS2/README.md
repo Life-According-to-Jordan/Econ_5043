@@ -2,7 +2,7 @@
 
 ### Q1) Covariance and Correlation
 
-- [Correlation vs. Causation](https://stats.stackexchange.com/questions/18082/how-would-you-explain-the-difference-between-correlation-and-covariance) 
+- [Correlation vs. Covariance](https://stats.stackexchange.com/questions/18082/how-would-you-explain-the-difference-between-correlation-and-covariance) 
 
 ### Q2) Combined Forecast
 
