@@ -4,7 +4,7 @@
 
 - [Correlation vs. Covariance](https://stats.stackexchange.com/questions/18082/how-would-you-explain-the-difference-between-correlation-and-covariance) 
 
-- [The Basics of Simple](https://math.dartmouth.edu/~matc/eBookshelf/statistics/CPS/simplereg4.pdf) thanks to Dartmouth 
+- [The Basics of Simple Linear Regression](https://math.dartmouth.edu/~matc/eBookshelf/statistics/CPS/simplereg4.pdf)
 
 ### Q2) Combined Forecast
 
