@@ -14,6 +14,8 @@ Use the data forecast.csv for this question. There are threee variables of inter
 
 - [quantmod](https://cran.r-project.org/web/packages/quantmod/quantmod.pdf) documentation
 
+- [correlation matrix](https://rveryday.wordpress.com/2016/11/22/create-a-correlation-matrix-in-r/) futher help 
+
 - A [guide](https://www.fidelity.com/viewpoints/guide-to-diversification) to portfolio diversification
 
 
