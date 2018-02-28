@@ -4,6 +4,8 @@
 
 - [Correlation vs. Covariance](https://stats.stackexchange.com/questions/18082/how-would-you-explain-the-difference-between-correlation-and-covariance) 
 
+- [The Basics of Simple](https://math.dartmouth.edu/~matc/eBookshelf/statistics/CPS/simplereg4.pdf) thanks to Dartmouth 
+
 ### Q2) Combined Forecast
 
 Use the data forecast.csv for this question. There are threee variables of interset. The original object of interest, y, and forecasts of y from two different models, forecast1 and forecast2. Use what we learned from class (Application 3: Optimal Forecast Combination), create a combined forecat that could minimize the variance of forecast error. Does it work? Comment on the reason why it may or may not work.
