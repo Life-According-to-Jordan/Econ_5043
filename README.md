@@ -12,8 +12,6 @@ Use the data forecast.csv for this question. There are threee variables of inter
 
 ### Q3) Portfolio Diversification and Nonlinear Dependence
 
-###### Packages 
-
 - [quantmod](https://cran.r-project.org/web/packages/quantmod/quantmod.pdf) documentation
 
 - A [guide](https://www.fidelity.com/viewpoints/guide-to-diversification) to portfolio diversification
