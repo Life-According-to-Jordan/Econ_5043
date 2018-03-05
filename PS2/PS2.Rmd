@@ -1,0 +1,183 @@
+---
+title: "PS2"
+author: "Jordan Hoehne"
+date: "2/27/2018"
+output:
+  word_document: default
+  pdf_document: default
+---
+#PS2
+```{r}
+#to ensure replication of results 
+set.seed(123456)
+setwd("/Users/jordan/desktop/")
+getwd()
+```
+
+#Question 1 
+#Covariance and Correlation
+```{r}
+#loading our data 
+wage2<-read.csv("wage2.csv")
+#checking to see the initial format 
+head(wage2)
+```
+
+```{r}
+#descriptive statistics help us get a big picture of the data
+summary(wage2)
+```
+
+```{r}
+#Descriptive statistics through the psych package
+library("psych")
+describe(wage2)
+#You'll notice we have some missing data. Our "n" column does not have the same amount of observations for each variable.
+```
+
+#Question 1.1 & 1.2
+```{r}
+#Calculate the covariance and correlation between individual wages (wage) and his/her education (educ). 
+#The units of wage and education were not covered prior to downloading this data set. We'll assume wage is per pay period (typically 2 weeks) and education is in years.
+#Note, these 2 variables have an equal number of observations
+wage<-diff(log(wage2$wage))
+educ<-diff(log(wage2$educ))
+#Calculating covariance of wage and education
+cov(wage, educ)
+#Calculating correlation of wage and education
+cor(wage, educ)
+#the correlation coefficient is 0.2535057 which is statistically different from 0 meaning no correlation. 
+#This implies that there is a (relatively weak) positive correlation between education and wages.
+```
+
+#Question 1.3.a
+The direct relationship of wages and education is the correlation between the two. The correlation is 0.2535057, which implies a weak positive relationship. 
+
+#Question 1.3.b
+The indirect relatonship between wages and education through IQ can be expressed as ...
+
+Covariace Property #5 
+cov(aX + bY,cZ) = acCov(X,Z) + bcCov(Y,Z)
+
+The indirect relationship between wages and education through ability (IQ).
+wages = (education | IQ)
+
+```{r}
+#set variables
+w<-wage2$wage
+e<-wage2$educ
+i<-wage2$IQ
+#define linear regression parameters
+lm.fit <- lm(w ~ e * i, data=as.data.frame(wage2))
+summary(lm.fit)
+```
+Thus, we can the indirect relationship between wages on education, IQ, and education given IQ as -11.3872, -1.5453, and 0.5083 respectively.
+
+
+#Question 2. 
+#Combined Forecast
+Use the data forecast.csv for this question. There are threee variables of interset. The original object of interest, y, and forecasts of y from two different models, forecast1 and forecast2. Use what we learned from class (Application 3: Optimal Forecast Combination), create a combined forecast that could minimize the variance of forecast error. Does it work? Comment on the reason why it may or may not work.
+
+```{r}
+forecast<-read.csv("forecast.csv")
+head(forecast)
+```
+
+```{r}
+e1<-(forecast$forecast1 - forecast$y)
+e2<-(forecast$forecast2 - forecast$y)
+w1 <- ((var(e2)-cov(e1,e2))/(var(e1)+var(e2)-2*cov(e1,e2)))
+w2 <- 1 - w1
+fc <- (w1*forecast$forecast1) + (w2*forecast$forecast2)
+fc
+```
+The combined forecasts reduce the error from just using one forecast. 
+
+#Question 3 
+#Portfolio Diversification and Nonlinear Dependence
+Pick any 3 stocks that you are intersted in...
+AAPL = Apple 
+CHK = Chesapeake 
+FE = First Energy
+```{r}
+library("quantmod")
+getSymbols("AAPL", src = "yahoo", from="2015-01-01")
+getSymbols("CHK", src = "yahoo", from="2015-01-01")
+getSymbols("GE", src = "yahoo", from="2015-01-01")
+```
+
+```{r}
+#pick 3 stocks and pick the pair with the most diversification as possible
+AAPL<-AAPL$AAPL.Adjusted
+AAPL_returns<-na.omit(diff(log(AAPL)))
+CHK<-CHK$CHK.Adjusted
+CHK_returns<-na.omit(diff(log(CHK)))
+GE<-GE$GE.Adjusted
+GE_returns<-na.omit(diff(log(GE)))
+```
+
+```{r}
+library("corrplot")
+Stock_Data<-cbind.data.frame(CHK_returns, AAPL_returns, GE_returns)
+corrplot(cor(Stock_Data), method = "number")
+```
+#Question 3.3
+```{r}
+library(np)
+CHK_returns_vector<-as.vector(CHK_returns)
+AAPL_returns_vector<-as.vector(AAPL_returns)
+npdeptest(CHK_returns_vector, AAPL_returns_vector, boot.num = 30, method = "summation")
+```
+#4. Question
+#Conditional Distribution, Transition Matrix, and Income Mobility
+```{r}
+library(MASS)
+set.seed(123456)
+Sigma <- matrix(c(10,3,3,2),2,2) 
+data<-mvrnorm(n=1000, rep(0, 2), Sigma) 
+y.tm1<- data[,1]
+y.t<- data[,2]
+```
+
+```{r}
+summary(data)
+```
+
+```{r}
+#Summary of y.t data, income class at time t 
+summary(y.t)
+```
+
+```{r}
+#Summary of y.tm1 data, income class at time t-1
+summary(y.tm1)
+```
+
+```{r}
+#cutting the data into regions 
+data.y.t<-cut(y.t, c(-3.992524, -0.983231,0.932721, 5.424066))
+data.y.tm1<-cut(y.tm1,c(-9.77396, -2.02675, 2.02091, 11.35747))
+```
+
+```{r}
+library(markovchain)
+df4<-table(y.t=data.y.t,y.tm1=data.y.tm1)
+row.names(df4)<-c("low","middle","high")
+colnames(df4)<-c("low", "middle","high")
+```
+
+```{r}
+joint.dist<-prop.table(df4)
+joint.dist
+```
+
+```{r}
+margin.dist<-addmargins(prop.table(df4))
+margin.dist
+```
+
+```{r}
+markov.table<-as(df4,"markovchain")
+markov.table
+```
+Given the markov chain table, it is easy to conclude that there is mobility in the society. Notice that many of the high earners moved as well as the middle moving both up and down as well. The low income group shrank considerably throughout the period. 
