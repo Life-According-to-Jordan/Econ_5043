@@ -1,0 +1,40 @@
+---
+title: "PS3_Econ5043"
+author: "Jordan Hoehne"
+date: "3/7/2018"
+output: word_document
+---
+```{r}
+library(psych)
+```
+
+```{r}
+titanic <- read.csv("titanic.csv")
+head(titanic)
+```
+
+```{r}
+describe(titanic)
+```
+
+```{r}
+summary(titanic)
+```
+
+```{r}
+#Check for missing observations in the data 
+sum(is.na(titanic))
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
