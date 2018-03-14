@@ -1,0 +1,100 @@
+---
+title: "HW1"
+author: "Jordan Hoehne"
+date: "2/5/2018"
+output:
+  word_document: default
+  pdf_document: default
+---
+###Please note I worked with Alex Skipper to help think through the logic on some of the questions 
+
+#1 Load prework configurations 
+```{r}
+set.seed(123456)
+library(vcd)
+titanic<-read.csv("titanic.csv")
+
+```
+#Make prop table to see probabilities
+```{r}
+survived<-(titanic$Survived)
+pclass<-(titanic$Pclass)
+titanic_table<-table(survived,pclass)
+data<-as.data.frame(cbind(survived,pclass))
+prop_table<-prop.table(titanic_table)
+prop_table
+
+```
+
+#Add margins to see marginal probabilities and totals 
+```{r}
+addmargins(prop_table)
+```
+
+#2
+```{r}
+mosaic(titanic_table, shade=TRUE, legend=TRUE)
+```
+
+
+#3
+```{r}
+titanic_xtabs<-xtabs(~survived+pclass)
+titanic_xtabs
+addmargins(titanic_xtabs)
+```
+#4 probability of pclass 1 and 2 
+```{r}
+spclass1and2<-(136+87)
+spclass1and2/891
+```
+
+#5
+```{r}
+ExpectedTT<-table(titanic$Survived, titanic$Pclass)
+ExpectedTT
+addmargins(ExpectedTT)
+chisq.test(ExpectedTT)
+
+#Manual Entry 
+Pclass1<-(216/891*549/891)*891
+Pclass2<-(184/891*549/891)*891
+Pclass3<-(491/891*549/891)*891
+P11<-(216/891*342/891)*891
+P12<-(184/891*342/891)*891
+P13<-(491/891*342/891)*891
+
+#percentage
+Pclass1/549
+P11/342
+Pclass2/549
+P12/342
+Pclass3/549
+P13/342
+
+#p-value is low, thus reject the null hypothesis. Essentially, the results  show that the classes are not independent. 
+
+#you could use mosaic to help view independence, you could also test the squared errors through angular testing to see indepence 
+```
+
+#Question 2 
+```{r}
+library(data.table)
+row_names<-c("70","75","80")
+col_names<-c("30","32","34")
+Q2_matrix<-matrix(c(.1,.2,0,.1,.2,.2,0,0,.1),nrow=3,ncol=3,dimnames=list(row_names,col_names))
+Q2_matrix
+#Viewing the margins 
+addmargins(Q2_matrix)
+chisq.test(Q2_matrix)
+```
+#Q2.2
+
+#probability is 0.6 on the return of stock A: x=<75
+
+#Q2.3
+
+#Unable to make a prediction on the prob of her portfolio that it is actually worth 13,000. 
+
+
+
