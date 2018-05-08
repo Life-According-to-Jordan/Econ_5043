@@ -10,39 +10,53 @@ output:
 
 #1 Load prework configurations 
 ```{r}
+#set seed for reproducability
 set.seed(123456)
+
+#vcd needed for mosaic plot
 library(vcd)
+
+#load in data 
 titanic<-read.csv("titanic.csv")
 
 ```
-#Make prop table to see probabilities
+#making prop table to see joint probabilities
 ```{r}
+#setting new columns
 survived<-(titanic$Survived)
 pclass<-(titanic$Pclass)
+
+#set new table for analysis 
 titanic_table<-table(survived,pclass)
-data<-as.data.frame(cbind(survived,pclass))
+
+#data<-as.data.frame(cbind(survived,pclass))
+
+#set prop table 
 prop_table<-prop.table(titanic_table)
+
+#view prop table 
 prop_table
 
 ```
 
-#Add margins to see marginal probabilities and totals 
+#Add margins to see marginal probabilities for columns and rows
 ```{r}
 addmargins(prop_table)
 ```
 
-#2
+#mosaic plot of table 
 ```{r}
 mosaic(titanic_table, shade=TRUE, legend=TRUE)
 ```
 
 
-#3
+#xtabs used to create contingency table 
 ```{r}
 titanic_xtabs<-xtabs(~survived+pclass)
 titanic_xtabs
 addmargins(titanic_xtabs)
 ```
+
 #4 probability of pclass 1 and 2 
 ```{r}
 spclass1and2<-(136+87)
@@ -51,15 +65,22 @@ spclass1and2/891
 
 #5
 ```{r}
-ExpectedTT<-table(titanic$Survived, titanic$Pclass)
-ExpectedTT
-addmargins(ExpectedTT)
-chisq.test(ExpectedTT)
+Expected<-table(titanic$Survived, titanic$Pclass)
 
-#Manual Entry 
+#view expected 
+Expected
+
+#add margins to expected value 
+addmargins(Expected)
+
+#test significance of expected 
+chisq.test(Expected)
+
+#manual comparison
 Pclass1<-(216/891*549/891)*891
 Pclass2<-(184/891*549/891)*891
 Pclass3<-(491/891*549/891)*891
+
 P11<-(216/891*342/891)*891
 P12<-(184/891*342/891)*891
 P13<-(491/891*342/891)*891
@@ -77,7 +98,7 @@ P13/342
 #you could use mosaic to help view independence, you could also test the squared errors through angular testing to see indepence 
 ```
 
-#Question 2 
+#create table for probabilities 
 ```{r}
 library(data.table)
 row_names<-c("70","75","80")
