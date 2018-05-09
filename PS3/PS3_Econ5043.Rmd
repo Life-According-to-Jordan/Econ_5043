@@ -10,27 +10,31 @@ setwd("/Users/jordan/desktop/")
 library(psych)
 library(randomForest)
 library(caret)
-#library(party)
 ```
 
+#load data 
 ```{r}
 titanic <- read.csv("titanic.csv")
+
+#view first entries of titanic data
 head(titanic)
 ```
-
+#summary statistics through psych package
 ```{r}
 describe(titanic)
 ```
-
+#summary statistics
 ```{r}
 summary(titanic)
 ```
 
+#sum.na sums the missing observations from the data 
 ```{r}
 #Check for missing observations in the data 
 sum(is.na(titanic))
 ```
 
+#check specific columns in data for missing observations 
 ```{r}
 #Checking to see if there is any data missing in the columns we are working with 
 sum(is.na(titanic$Pclass))
@@ -39,38 +43,40 @@ sum(is.na(titanic$Sex))
 ```
 Since all of the data is there, we are good to proceed.
 
-#Question 1
+# Question 1
 The statement, Pr[Survival | Pclass,Sex], can be expressed as:
 Pr[PClass and Survived and Sex]/Pr[PClass and Sex].
 
 ```{r}
+#create table 
 t_table<-table(Lived<-titanic$Survived, Gender<-titanic$Sex, Class<-titanic$Pclass)
+
+#set joint distribution tables 
 t_joint_dist<-prop.table(t_table)
+
+#view joint distribution tables set earlier 
 t_joint_dist
 ```
 
+#marginal distribution
 ```{r}
+#set marginal distribution by addmargins to prop table 
 t_margin_dist<-addmargins(prop.table(t_joint_dist))
+
+#view marginal distribution of data 
 t_margin_dist
 ```
+# Question 2
+#look into probabilities of 9 heads and 3 tails of a coin flip, distribution = (9H, 3T)
 
-```{r}
-#par(mfrow=c(1,1))
-#simple_survival_ctree <- ctree(Survived ~ Pclass + Sex, data=titanic, controls=ctree_control(testtype="Bonferroni"))
-#plot(simple_survival_ctree)
-```
-
-#Question2
-#Distribution = (9H, 3T)
-
-Let’s assume the following priors (f(θ)): 
+#prior probabilities (f(θ)): 
 p(θ = .15) = .3 
 p(θ = .25) = .2
 p(θ = .5) = .3
 p(θ = .75) = .2
 
 ```{r}
-#setting variables to work with later 
+#probability of resulting coin flips resulting in heads: 15%, 25%, 50%, and 75% 
 p_theta.15 <- .15
 p_theta.25 <- .25
 p_theta.5 <- .5
@@ -82,10 +88,13 @@ Calculating the likelihood (the probability of coming up with a H is θ, then th
   The general formula is: p^n*(1-p)^N-n, for N observations 
 (b) Now calculate f(x|0.15),f(x|0.25),f(x|0.5),f(x|0.75)
 ```{r}
+#set variables
 p.t.15<-p_theta.15^9*(1-p_theta.15)^3
 p.t.25<-p_theta.25^9*(1-p_theta.25)^3
 p.t.50<-p_theta.5^9*(1-p_theta.5)^3
 p.t.75<-p_theta.75^9*(1-p_theta.75)^3
+
+#view stored variables 
 p.t.15
 p.t.25
 p.t.50
@@ -94,15 +103,20 @@ p.t.75
 
 Calculating f(x) using the law of total probability
 ```{r}
+#store prior by liklihood of observation
 f_x1<-p.t.15*.3
 f_x2<-p.t.25*.25
 f_x3<-p.t.50*.3
 f_x4<-p.t.75*.2
-f_x<-sum(f_x1 + f_x2+f_x3+f_x4)
+
+#sum all probabilities 
+f_x<-sum(f_x1 + f_x2+f_x3+f_x4
+
+#list of all probabilities 
 list(f_x1, f_x2, f_x3, f_x4, f_x)
 ```
 
-Calculating the posterior distribution:
+#calculating the posterior distribution:
 (a) f(θ1 = .15|x) = f(x|θ1)·f(θ1) / f (x)
 (b) f(θ2 = .25|x) = f(x|θ2)·f(θ2) / f (x)
 (c) f(θ3 = .50|x) = f(x|θ3)·f(θ3) / f (x)
@@ -117,36 +131,49 @@ b<-f_x2/f_x
 c<-f_x3/f_x
 #d
 d<-f_x4/f_x
-#Each Probability 
+
+#probability that each event occurs given the coin toss
 list(a,b,c,d)
+
 #Total Probability 
 Total_Probability<-sum(a,b,c,d)
 Total_Probability
 
+#should sum up to 1.0
 ```
 
 
 ```{r}
 options(digits=3)
+#set table for comparison
 Prior_Posterior<- matrix(c(.3, .2, .3, .2, a, b, c, d), ncol=4, byrow=TRUE)
 colnames(Prior_Posterior) <- c("θ1", "θ2", "θ3", "θ4")
 row.names(Prior_Posterior) <- c("Prior", "Posterior")
+
+#store as new table 
 Before_After<-as.table(Prior_Posterior)
+
+#view new table 
 Before_After
 ```
+
+#conlusion
 Given 12 flips of a coin, we believed we would the results for .15, .25, .5, and .75 of the results to return heads as .3, .2, .3, and .2. The resulting probabilities were: 0.000023, 0.001305, 0.237575, and 0.761097 respectively. It is unlikely to see only .15 or .25 of the flips lead to 9 Heads and 3 Tails and we are more likely to see .5 of the coin flips to return in 9 Heads and 3 Tails and even more likely for .75 of the coin flips to result in 9 Heads and 3 Tails. The differnce could be in a small amount of data collected for our priors, which would explain the difference. 
 
-#Question 3
+# Question 3
 #Interpreting the Medical Test (I)
+
 A Dr. says that 90 percent of the people (!) who have smallpox have the symptoms you have. Since smallpox is often fatal, your first inclination may be to panic. But your doctor would tell you that the probability you have smallpox is only 1.1 percent (or 0.011), so you do not have to panic.
 
 ###Your doctor’s statements seem contradictory to each other. How to reconcile it? Is your doctoring just comforting you? 
+
 The Dr.'s statements are not contradicting one another. He has made 2 statements that both pertain to your medical conditions.
 It's very possible that you have fallen into the 1.1% of individuals that have smallpox. Given that you 90% of the symptoms,
 you should be concerned for you health as you likely have smallpox. Since the Dr. did not state that other illnesses share
 these symptoms, I would advise you meet with your Dr again and ask for further testing.
 
 ###Or, is there any scientific reason to explain the seemingly contradictory statements that you doctor made?
+
 There are possible explanations for his diagnosis. He could be a terrible Dr. or there is a slight possibility that 
 you do not have small pox. Even though you have share 90% of the symptoms, you could not have smallpox. Alternatively,
 there may have been other cases where someone only shared 50% of the symptoms or perhaps showed no symptoms  at all 
@@ -154,17 +181,26 @@ and still had smallpox.
 
 #Question 4
 #Interpreting the Medical Test (II)
+
 ```{r}
-#Establish Probabilities 
+#background context of problem 
+
 #Identical Twins are always the same sex
 #Fraternal Twins have a P(.5) of being the same sex 
+
+#set table for viewing data 
 twins<-matrix(c(1/3,.5*2/3,0,.5*2/3), ncol=2,byrow=TRUE)
 colnames(twins) <- c("Identical Twins", "Fraternal Twins")
 row.names(twins) <- c("Same_Sex", "Different_Sex")
+
+#add margins to table 
 twins<-addmargins(as.table(twins))
+
+#view new table
 twins
 ```
-Thus, the physician should inform the individual that she has a 1/3 chance that her twins will be identical and have the same sex 
+#Conclusion
+The individual has a 1/3 chance that her twins will be identical and have the same sex.
 
 #Question 5 
 #Bayes’ Rule and Hiring Decisions
@@ -178,7 +214,7 @@ Unqualified_Interviewed_Well<-.20
 Unqualified_Interviewed_Poorly<-.80
 ```
 
-Now, based on this data, what is the probability of a job candidate who interviewed well being a qualified worker?
+#Now, based on this data, what is the probability of a job candidate who interviewed well being a qualified worker?
 ```{r}
 interview<-matrix(c(.8*.9,.2*.2,.8*.1,.2*.8), ncol=2,byrow=TRUE)
 colnames(interview) <- c("Qualified Worker", "Unqualified Worker")
@@ -187,12 +223,11 @@ interview<-addmargins(as.table(interview))
 interview
 ```
 With the given table, we can find out the odds that someone that interviewed well being qualified as Qualified and Interviewed Well / Interviewed Well 
+
 ```{r}
+#store variable for percentage that were interviewed well and qualified 
 Prob_Interviewed_Well_and_Qualified <- .72/.76
+
+#view new variable
 Prob_Interviewed_Well_and_Qualified
 ```
-
-```{r}
-
-```
-
